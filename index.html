@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>得慕大 · 三城记</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080e;--bg2:#0d0d16;--card:#111120;--card2:#161628;
+  --b1:#1e1e36;--b2:#282848;
+  --gold:#c9a55a;--gold2:#e8c97a;--gold3:#f0dfa0;
+  --red:#9b2335;--red2:#c0394a;--red3:#e05565;
+  --blue:#1a3a6a;--blue2:#2a5a9a;--blue3:#5a9aca;
+  --text:#ccc8d8;--text2:#8880a0;--muted:#404060;
+  --white:#f0ecf8;
+  --YH:#c9a55a;--HJ:#5a9aca;--JY:#c0394a;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;}
+
+/* grain */
+body::before{content:'';position:fixed;inset:0;opacity:.03;pointer-events:none;z-index:9998;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden;z-index:1;}
+.screen.active{display:flex;}
+
+/* ── TITLE ── */
+#s-title{background:var(--bg);align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow:hidden;}
+.title-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 80%,rgba(201,165,90,.06),transparent),
+  radial-gradient(ellipse 60% 40% at 20% 30%,rgba(90,154,202,.04),transparent),
+  radial-gradient(ellipse 50% 40% at 80% 20%,rgba(192,57,74,.04),transparent);}
+.title-line{font-size:9px;letter-spacing:6px;color:var(--muted);text-transform:uppercase;margin-bottom:28px;animation:fadeUp .8s both;}
+.title-kr{font-family:'Cormorant Garamond',serif;font-size:clamp(60px,16vw,110px);font-weight:300;color:var(--white);line-height:1;font-style:italic;animation:fadeUp .8s .1s both;}
+.title-sub{font-size:clamp(10px,2.5vw,13px);letter-spacing:8px;color:var(--gold);margin:8px 0 28px;animation:fadeUp .8s .2s both;}
+.trio-names{display:flex;gap:20px;justify-content:center;margin-bottom:28px;animation:fadeUp .8s .3s both;}
+.tname{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:2px;}
+.tname.yh{color:var(--YH);}
+.tname.hj{color:var(--HJ);}
+.tname.jy{color:var(--JY);}
+.title-desc{max-width:300px;font-size:12px;line-height:2.1;color:var(--text2);margin-bottom:36px;animation:fadeUp .8s .4s both;}
+.btn-enter{background:transparent;border:1px solid rgba(201,165,90,.25);color:var(--gold);padding:12px 36px;border-radius:10px;font-family:'Noto Serif SC',serif;font-size:13px;letter-spacing:4px;cursor:pointer;transition:.3s;animation:fadeUp .8s .55s both;}
+.btn-enter:active{background:rgba(201,165,90,.06);}
+.t-note{position:absolute;bottom:20px;font-size:9px;color:var(--muted);letter-spacing:2px;}
+
+/* ── SETUP ── */
+#s-bg,#s-personality{background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.setup-header{position:fixed;top:0;left:0;right:0;padding:14px 18px;background:rgba(8,8,14,.95);backdrop-filter:blur(12px);z-index:10;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--b1);}
+.back-btn{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px;}
+.setup-tag{font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.setup-wrap{padding:72px 20px 40px;max-width:440px;margin:0 auto;}
+.setup-h{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);font-style:italic;margin-bottom:6px;}
+.setup-sub{font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:22px;}
+
+.bg-card{background:var(--card);border:1px solid var(--b1);border-radius:14px;padding:18px;margin-bottom:10px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;}
+.bg-card::before{content:'';position:absolute;inset:0;opacity:0;transition:.2s;}
+.bg-card.yh-bg::before{background:linear-gradient(135deg,rgba(201,165,90,.08),transparent);}
+.bg-card.hj-bg::before{background:linear-gradient(135deg,rgba(90,154,202,.08),transparent);}
+.bg-card.jy-bg::before{background:linear-gradient(135deg,rgba(192,57,74,.08),transparent);}
+.bg-card.sel::before{opacity:1;}
+.bg-card.sel{border-color:rgba(201,165,90,.3);}
+.bg-card:active{transform:scale(.99);}
+.bg-accent{font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+.bg-accent.yh{color:var(--YH);}
+.bg-accent.hj{color:var(--HJ);}
+.bg-accent.jy{color:var(--JY);}
+.bg-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);margin-bottom:5px;}
+.bg-desc{font-size:12px;color:var(--text2);line-height:1.7;}
+.bg-trait{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;}
+.bg-check{position:absolute;top:14px;right:14px;width:18px;height:18px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);transition:.2s;}
+.bg-card.sel .bg-check{background:rgba(201,165,90,.12);border-color:rgba(201,165,90,.4);}
+
+.btn-confirm{width:100%;background:transparent;border:1px solid rgba(201,165,90,.2);color:var(--gold);padding:12px;border-radius:10px;font-family:'Noto Serif SC',serif;font-size:13px;letter-spacing:2px;cursor:pointer;margin-top:10px;transition:.2s;}
+.btn-confirm:disabled{opacity:.3;cursor:not-allowed;}
+.btn-confirm:not(:disabled):active{background:rgba(201,165,90,.05);}
+
+/* ── GAME ── */
+#s-game{background:var(--bg);}
+.g-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 8px;border-bottom:1px solid var(--b1);background:rgba(8,8,14,.94);backdrop-filter:blur(14px);flex-shrink:0;z-index:10;}
+.g-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--white);font-style:italic;}
+.g-ch{font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:1px;}
+.hearts{display:flex;gap:8px;}
+.heart-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.h-name{font-size:8px;letter-spacing:1px;}
+.h-name.yh{color:var(--YH);}
+.h-name.hj{color:var(--HJ);}
+.h-name.jy{color:var(--JY);}
+.h-bar{width:34px;height:2px;background:var(--b1);border-radius:2px;overflow:hidden;}
+.h-fill{height:100%;border-radius:2px;transition:width .5s;}
+.h-fill.yh{background:linear-gradient(90deg,#8a6520,var(--YH));}
+.h-fill.hj{background:linear-gradient(90deg,#1a4070,var(--HJ));}
+.h-fill.jy{background:linear-gradient(90deg,#6a1520,var(--JY));}
+.h-num{font-size:8px;color:var(--text2);}
+.g-menu{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 8px;}
+.g-chat{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 13px 180px;}
+
+/* ── MSG ── */
+.msg-row{display:flex;gap:7px;margin-bottom:14px;animation:msgIn .32s ease both;}
+.msg-row.player{flex-direction:row-reverse;}
+@keyframes msgIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.msg-avi{width:30px;height:30px;border-radius:50%;flex-shrink:0;align-self:flex-end;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:var(--white);}
+.avi-YH{background:linear-gradient(135deg,#3a2a08,#6a4a18);}
+.avi-HJ{background:linear-gradient(135deg,#0a1a30,#1a3a60);}
+.avi-JY{background:linear-gradient(135deg,#2a0810,#5a1828);}
+.avi-P{background:linear-gradient(135deg,#1a1a2a,#2a2a3a);}
+.msg-body{max-width:80%;}
+.msg-who{font-size:9px;color:var(--muted);margin-bottom:3px;letter-spacing:.5px;}
+.msg-row.player .msg-who{text-align:right;}
+.msg-bubble{padding:10px 13px;font-size:13px;line-height:1.8;}
+.npc-YH .msg-bubble{background:rgba(201,165,90,.07);border:1px solid rgba(201,165,90,.15);color:var(--text);border-radius:4px 14px 14px 14px;}
+.npc-HJ .msg-bubble{background:rgba(90,154,202,.07);border:1px solid rgba(90,154,202,.15);color:var(--text);border-radius:4px 14px 14px 14px;}
+.npc-JY .msg-bubble{background:rgba(192,57,74,.07);border:1px solid rgba(192,57,74,.15);color:var(--text);border-radius:4px 14px 14px 14px;}
+.msg-row.player .msg-bubble{background:rgba(201,165,90,.06);border:1px solid rgba(201,165,90,.12);color:rgba(240,224,180,.9);border-radius:14px 4px 14px 14px;}
+.msg-row.system .msg-bubble{background:rgba(201,165,90,.03);border:1px solid rgba(201,165,90,.08);color:rgba(201,165,90,.55);border-radius:8px;font-family:'Noto Serif SC',serif;font-size:11.5px;line-height:2.1;font-style:italic;}
+.msg-row.system{justify-content:center;}
+.msg-row.system .msg-body{max-width:94%;}
+.stat-tags{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;}
+.stag{font-size:9px;padding:2px 7px;border-radius:8px;}
+.stag.yh-up{color:var(--YH);background:rgba(201,165,90,.1);}
+.stag.hj-up{color:var(--HJ);background:rgba(90,154,202,.1);}
+.stag.jy-up{color:var(--JY);background:rgba(192,57,74,.1);}
+.stag.down{color:#888;background:rgba(128,128,128,.1);}
+
+/* scene */
+.scene-blk{background:rgba(201,165,90,.025);border-left:2px solid rgba(201,165,90,.12);border-radius:0 6px 6px 0;padding:11px 15px;margin-bottom:14px;font-family:'Noto Serif SC',serif;font-size:12px;line-height:2.1;color:rgba(201,165,90,.5);animation:msgIn .32s ease both;}
+
+/* event */
+.ev-card{background:var(--card);border:1px solid var(--b2);border-radius:12px;padding:13px 15px;margin-bottom:14px;animation:msgIn .32s ease both;}
+.ev-type{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.ev-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--white);margin-bottom:4px;}
+.ev-body{font-size:12px;color:var(--text2);line-height:1.7;}
+
+/* SMS */
+.sms-wrap{background:linear-gradient(160deg,#0c0c18,#0a0a14);border:1px solid rgba(120,100,160,.14);border-radius:14px;padding:13px;margin-bottom:14px;animation:msgIn .32s ease both;}
+.sms-time{font-size:8px;color:rgba(160,140,200,.4);text-align:center;margin-bottom:10px;letter-spacing:3px;}
+.sms-line{display:flex;gap:6px;margin-bottom:7px;}
+.sms-line.r{flex-direction:row-reverse;}
+.sms-bbl{font-size:12.5px;line-height:1.75;padding:9px 12px;border-radius:13px;max-width:82%;}
+.sms-line:not(.r) .sms-bbl{background:rgba(255,255,255,.05);color:var(--text);}
+.sms-line.r .sms-bbl{background:rgba(201,165,90,.1);color:rgba(240,224,180,.9);}
+
+/* PHONE */
+.phone-wrap{background:linear-gradient(160deg,#0d0c1a,#0a0a12);border:1px solid rgba(120,100,180,.15);border-radius:18px;padding:20px 16px;margin-bottom:14px;text-align:center;animation:msgIn .32s ease both;}
+.phone-icon{font-size:28px;margin-bottom:8px;}
+.phone-name{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--white);font-style:italic;margin-bottom:3px;}
+.phone-status{font-size:9px;color:rgba(160,140,200,.5);letter-spacing:3px;margin-bottom:12px;}
+.phone-log{text-align:left;font-size:12px;line-height:1.9;color:var(--text2);background:rgba(0,0,0,.2);border-radius:8px;padding:11px;}
+
+/* GROUP CHAT */
+.group-wrap{background:var(--card);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:14px;animation:msgIn .32s ease both;}
+.group-header{padding:10px 14px;background:var(--card2);border-bottom:1px solid var(--b1);font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.group-body{padding:12px 14px;}
+.gmsg{display:flex;gap:7px;margin-bottom:8px;}
+.gmsg-avi{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Cormorant Garamond',serif;color:var(--white);flex-shrink:0;}
+.gmsg-body .gm-who{font-size:9px;margin-bottom:2px;}
+.gmsg-body .gm-who.yh{color:var(--YH);}
+.gmsg-body .gm-who.hj{color:var(--HJ);}
+.gmsg-body .gm-who.jy{color:var(--JY);}
+.gmsg-body .gm-who.oth{color:var(--muted);}
+.gmsg-body .gm-text{font-size:12px;color:var(--text);line-height:1.6;}
+
+/* INTIMATE SCENE */
+.intimate-blk{background:linear-gradient(160deg,rgba(155,35,53,.06),rgba(13,13,22,.8));border:1px solid rgba(155,35,53,.18);border-radius:14px;padding:16px;margin-bottom:14px;animation:msgIn .32s ease both;}
+.intimate-label{font-size:8px;letter-spacing:3px;color:rgba(192,57,74,.5);text-transform:uppercase;margin-bottom:8px;}
+.intimate-text{font-family:'Noto Serif SC',serif;font-size:13px;line-height:2.2;color:rgba(220,200,210,.8);}
+
+/* CHOICES */
+.choices-wrap{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(8,8,14,1) 55%,transparent);padding:10px 13px 28px;z-index:20;}
+.choices-label{font-size:8px;letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:7px;}
+.choice-btn{width:100%;background:rgba(255,255,255,.02);border:1px solid var(--b1);color:var(--text);padding:11px 14px;border-radius:10px;font-size:12.5px;font-family:'Noto Sans SC',sans-serif;line-height:1.5;text-align:left;cursor:pointer;margin-bottom:6px;transition:.15s;display:flex;align-items:center;gap:9px;}
+.choice-btn:last-child{margin-bottom:0;}
+.choice-btn:active{border-color:rgba(201,165,90,.25);background:rgba(201,165,90,.03);}
+.choice-num{width:17px;height:17px;border-radius:50%;background:var(--b1);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);flex-shrink:0;}
+.c-hint{font-size:9px;padding:2px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;}
+.hint-YH{background:rgba(201,165,90,.1);color:var(--YH);}
+.hint-HJ{background:rgba(90,154,202,.1);color:var(--HJ);}
+.hint-JY{background:rgba(192,57,74,.1);color:var(--JY);}
+.hint-N{background:rgba(128,128,128,.08);color:var(--muted);}
+
+/* MENU */
+#s-menu{background:rgba(8,8,14,.96);backdrop-filter:blur(20px);z-index:50;align-items:center;justify-content:center;padding:40px 24px;}
+.menu-card{background:var(--card);border:1px solid var(--b2);border-radius:16px;padding:22px;width:100%;max-width:280px;}
+.menu-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);text-align:center;font-style:italic;margin-bottom:16px;}
+.menu-btn{width:100%;background:none;border:1px solid var(--b1);color:var(--text);padding:11px 14px;border-radius:9px;font-size:13px;cursor:pointer;margin-bottom:7px;text-align:left;display:flex;align-items:center;gap:9px;transition:.2s;}
+.menu-btn:last-child{margin-bottom:0;}
+.menu-btn:active{background:var(--card2);}
+.menu-divider{height:1px;background:var(--b1);margin:6px 0;}
+
+/* CHAPTER OVERLAY */
+.ch-ov{position:fixed;inset:0;background:rgba(8,8,14,.96);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;pointer-events:none;opacity:0;transition:opacity .5s;}
+.ch-ov.show{opacity:1;}
+.co-num{font-size:9px;letter-spacing:5px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;}
+.co-title{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,7vw,38px);color:var(--white);line-height:1.2;margin-bottom:8px;font-style:italic;}
+.co-sub{font-size:11px;color:var(--text2);letter-spacing:2px;}
+
+/* ENDING */
+#s-ending{background:var(--bg);align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto;}
+.e-badge{font-size:50px;margin-bottom:16px;animation:fadeUp .8s both;}
+.e-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);font-style:italic;margin-bottom:6px;animation:fadeUp .8s .15s both;}
+.e-who{font-size:10px;letter-spacing:3px;margin-bottom:16px;animation:fadeUp .8s .3s both;}
+.e-who.yh{color:var(--YH);}
+.e-who.hj{color:var(--HJ);}
+.e-who.jy{color:var(--JY);}
+.e-who.alone{color:var(--muted);}
+.e-desc{font-size:13px;color:var(--text2);line-height:2.1;max-width:320px;margin:0 auto 26px;white-space:pre-line;animation:fadeUp .8s .45s both;}
+.e-hearts{display:flex;gap:18px;justify-content:center;margin-bottom:26px;animation:fadeUp .8s .6s both;}
+.e-h{text-align:center;}
+.e-h-num{font-family:'Cormorant Garamond',serif;font-size:24px;}
+.e-h-num.yh{color:var(--YH);}
+.e-h-num.hj{color:var(--HJ);}
+.e-h-num.jy{color:var(--JY);}
+.e-h-label{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+.btn-restart{background:transparent;border:1px solid var(--b1);color:var(--text2);padding:11px 30px;border-radius:9px;font-size:12px;cursor:pointer;letter-spacing:2px;animation:fadeUp .8s .75s both;}
+.btn-restart:active{border-color:rgba(201,165,90,.25);}
+
+/* LOADING */
+.ld-row{display:flex;gap:7px;margin-bottom:14px;}
+.ld-dots{display:flex;gap:4px;padding:10px 13px;background:var(--card2);border:1px solid var(--b1);border-radius:4px 13px 13px 13px;width:fit-content;}
+.ld-dots span{width:5px;height:5px;background:var(--muted);border-radius:50%;animation:dp 1.2s ease infinite;}
+.ld-dots span:nth-child(2){animation-delay:.2s;}
+.ld-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dp{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-thumb{background:var(--b2);}
+</style>
+</head>
+<body>
+
+<div class="ch-ov" id="chOv">
+  <div class="co-num" id="coNum"></div>
+  <div class="co-title" id="coTitle"></div>
+  <div class="co-sub" id="coSub"></div>
+</div>
+
+<!-- TITLE -->
+<div class="screen active" id="s-title">
+  <div class="title-bg"></div>
+  <div class="title-line">THE BOYZ · 得慕大 · PARALLEL WORLD</div>
+  <div class="title-kr">三城記</div>
+  <div class="title-sub">세 남자 · 한 여자 · 하나의 선택</div>
+  <div class="trio-names">
+    <span class="tname yh">金泳勋 영훈</span>
+    <span style="color:var(--muted);font-size:12px;">·</span>
+    <span class="tname hj">李贤在 현재</span>
+    <span style="color:var(--muted);font-size:12px;">·</span>
+    <span class="tname jy">李柱延 주연</span>
+  </div>
+  <p class="title-desc">
+    三个男人。一个女人。<br>
+    首尔的夜晚从不会简单。<br>
+    你可以同时让他们都动心——<br>
+    但最后，只能选一个。
+  </p>
+  <button class="btn-enter" onclick="goTo('s-bg')">进入故事</button>
+  <div class="t-note">PARALLEL WORLD · 所有内容均为虚构创作 · 全年龄向改编版</div>
+</div>
+
+<!-- BG SELECT -->
+<div class="screen" id="s-bg">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('s-title')">←</button>
+    <span class="setup-tag">选择你的背景</span>
+  </div>
+  <div class="setup-wrap">
+    <h2 class="setup-h">你是谁？</h2>
+    <p class="setup-sub">你的背景决定了你进入他们世界的方式，以及你在他们眼中的位置。</p>
+    <div id="bgList"></div>
+    <button class="btn-confirm" id="btnBg" onclick="goTo('s-personality')" disabled>下一步</button>
+  </div>
+</div>
+
+<!-- PERSONALITY SELECT -->
+<div class="screen" id="s-personality">
+  <div class="setup-header">
+    <button class="back-btn" onclick="goTo('s-bg')">←</button>
+    <span class="setup-tag">选择你的性格</span>
+  </div>
+  <div class="setup-wrap">
+    <h2 class="setup-h">你的态度</h2>
+    <p class="setup-sub">面对三个同时想靠近你的男人，你会是哪种人？</p>
+    <div id="pList"></div>
+    <button class="btn-confirm" id="btnP" onclick="startGame()" disabled>开始故事</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="s-game">
+  <div class="g-header">
+    <div>
+      <div class="g-title">得慕大 · 三城记</div>
+      <div class="g-ch" id="gCh">序章</div>
+    </div>
+    <div class="hearts">
+      <div class="heart-item">
+        <div class="h-name yh">영훈</div>
+        <div class="h-bar"><div class="h-fill yh" id="fYH" style="width:10%"></div></div>
+        <div class="h-num" id="nYH">10</div>
+      </div>
+      <div class="heart-item">
+        <div class="h-name hj">현재</div>
+        <div class="h-bar"><div class="h-fill hj" id="fHJ" style="width:10%"></div></div>
+        <div class="h-num" id="nHJ">10</div>
+      </div>
+      <div class="heart-item">
+        <div class="h-name jy">주연</div>
+        <div class="h-bar"><div class="h-fill jy" id="fJY" style="width:10%"></div></div>
+        <div class="h-num" id="nJY">10</div>
+      </div>
+    </div>
+    <button class="g-menu" onclick="goTo('s-menu')">☰</button>
+  </div>
+  <div class="g-chat" id="gChat"></div>
+  <div class="choices-wrap" id="choicesWrap" style="display:none;">
+    <div class="choices-label">——— 做出选择 ———</div>
+    <div id="choicesList"></div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="screen" id="s-menu" style="display:none;">
+  <div class="menu-card">
+    <div class="menu-title">三城记</div>
+    <button class="menu-btn" onclick="goTo('s-game')">▶ 继续</button>
+    <button class="menu-btn" onclick="doSave()">💾 保存</button>
+    <button class="menu-btn" onclick="doLoad()">📂 读取</button>
+    <div class="menu-divider"></div>
+    <button class="menu-btn" onclick="if(confirm('确定重新开始？'))hardRestart()">↺ 重新开始</button>
+  </div>
+</div>
+
+<!-- ENDING -->
+<div class="screen" id="s-ending" style="display:none;">
+  <div class="e-badge" id="eBadge">✦</div>
+  <div class="e-title" id="eTitle"></div>
+  <div class="e-who" id="eWho"></div>
+  <div class="e-desc" id="eDesc"></div>
+  <div class="e-hearts">
+    <div class="e-h"><div class="e-h-num yh" id="ef1">—</div><div class="e-h-label">영훈</div></div>
+    <div class="e-h"><div class="e-h-num hj" id="ef2">—</div><div class="e-h-label">현재</div></div>
+    <div class="e-h"><div class="e-h-num jy" id="ef3">—</div><div class="e-h-label">주연</div></div>
+  </div>
+  <button class="btn-restart" onclick="hardRestart()">重新开始</button>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+const BG_OPTIONS = [
+  {id:'chaebol',tag:'재벌 2세',name:'财阀千金',accent:'yh',
+   desc:'你的家族在首尔有四栋楼、两个集团。你不需要任何人，但你选择出现在这个世界里。',
+   trait:'出行低调，但每个细节都价值不菲。眼神里有一种不需要解释的笃定。'},
+  {id:'mixed',tag:'해외파',name:'混血归来者',accent:'hj',
+   desc:'你在巴黎长大，母亲是法国人，父亲是韩国人。你的韩语流利，但你的思维方式是另一套。',
+   trait:'永远带着一点格格不入的气质，让人想靠近又摸不透。'},
+  {id:'founder',tag:'창업자',name:'独立创业者',accent:'jy',
+   desc:'你二十五岁，自己的公司刚刚完成B轮融资。你比他们更忙，也比他们更清醒。',
+   trait:'时间就是钱，你不会为任何人多停留——除非你真的想。'},
+];
+
+const PERSONALITIES = [
+  {id:'queen',name:'女王型',icon:'♛',
+   desc:'你知道他们都在看你，你享受这种注意，但你不廉价地给予任何东西。',
+   tone:'掌控感强，偶尔露出一点柔软，反差让人上瘾'},
+  {id:'cold',name:'冷淡型',icon:'❄',
+   desc:'你对谁都保持距离，你的温柔要靠他们自己挣来。',
+   tone:'话少，但每句都够分量，让人想猜你在想什么'},
+  {id:'bold',name:'直接型',icon:'⚡',
+   desc:'你不玩欲擒故纵，你直接说你想要什么，让他们措手不及。',
+   tone:'大胆直接，偶尔让他们反而不知所措'},
+  {id:'soft',name:'温柔型',icon:'🤍',
+   desc:'你的温柔是真实的，你让每个人都觉得被你看见了——这很危险。',
+   tone:'细腻，记得所有细节，让他们无法拒绝依赖你'},
+];
+
+// ══════════════════════════════════════
+// CHARACTER RESPONSES LIBRARY
+// ══════════════════════════════════════
+const YH_RESPONSES = {
+  greeting: ['……你来了。','嗯，坐。','（停顿一下）……我等你一会儿了。','你来得比我想的早。'],
+  flirt:    ['别这样看我。','（眼神移开）……你知道你在做什么吗。','我告诉过自己不要在意你。','……어，没想到你会这样说。'],
+  jealous:  ['他刚才跟你说什么了。','（语气平静，但眼神不平静）……你和贤在走得很近。','柱延那个人，你要注意一点。','……没什么，只是看到了。'],
+  intimate: ['……过来一点。（声音放低）','你现在离我很近。','我不确定我还能继续忍着。','……嗯，就这样。别动。'],
+  reject:   ['……我知道了。','（沉默）','没事，是我想多了。','……好。（转身）'],
+  sweet:    ['你今天……比平时好看。','……有时候我不知道该怎么跟你说话。','我在想你的时候，比我以为的频繁。','(轻声) 你愿意陪我待一会儿吗。'],
+};
+const HJ_RESPONSES = {
+  greeting: ['哟，来了啊。','（笑）我就知道你会来。','你今天来晚了，我都开始以为你不来了。','（耳机摘下来）进来坐。'],
+  flirt:    ['（嘴角上扬）……你在撩我吗。','哈，你这话让我想……算了。','（往你这边靠近一点）你最好说真的。','……你知道这样说很危险吗。'],
+  jealous:  ['泳勋刚才跟你说什么了，说这么久。','（轻描淡写）……哦，你跟柱延挺好聊的嘛。','没有，我只是觉得，他不是你那种人。','……随便，你开心就好。（语气明显不对）'],
+  intimate: ['……你现在的眼神，不太对。','（手放在你旁边）我们两个，现在，有点近。','你知道我在想什么吗。','……我没想到你会让我靠这么近。'],
+  reject:   ['好嘛，我明白。','（笑了笑，没到眼睛）……行，我知道了。','不强求。（停）真的。','……嗯。那你去吧。'],
+  sweet:    ['你笑起来……有点让我分心。','我发现，我喜欢你在我身边的感觉。','（突然认真）……你对我来说，不是普通朋友那种。','喂，我可不可以……（顿住了）算了，下次再说。'],
+};
+const JY_RESPONSES = {
+  greeting: ['……你到了。','（点头，没多说）','坐。（直接）','我在等你。'],
+  flirt:    ['……（沉默看你）','别说这种话，我会当真的。','你知道你在对谁说这话吗。','（低头，声音压低）……再说一遍。'],
+  jealous:  ['贤在那个人，你最好不要太靠近。','（面无表情）……泳勋跟你说话，说了多久。','……没事，我只是不喜欢别人碰你。（停顿）我是说……','随便。（但之后一直盯着你）'],
+  intimate: ['……过来。','我现在很想……（停）','你现在站的位置，让我很难保持理智。','（把你挡在墙边，声音极低）……你怕我吗。'],
+  reject:   ['……好。','我知道了。（离开）','（一句话都没有，只是走了）','……以后可以不用再解释了。'],
+  sweet:    ['我不说什么好听的，但我每次见你，都没想过要走。','你不知道我有多少次想直接告诉你。','……如果你允许的话，我想一直这样。','你在我这里，和别人不一样。'],
+};
+
+function getResponse(who, type) {
+  const lib = who==='YH'?YH_RESPONSES:who==='HJ'?HJ_RESPONSES:JY_RESPONSES;
+  const arr = lib[type]||lib.greeting;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+// ══════════════════════════════════════
+// STORY
+// ══════════════════════════════════════
+function buildStory(bgId, pId) {
+  const uid = () => Math.random().toString(36).slice(2,8);
+  const sc  = t => ({id:uid(),type:'scene',text:t});
+  const npc = (who,t,yh=0,hj=0,jy=0) => ({id:uid(),type:'npc',who,text:t,yh,hj,jy});
+  const you = t => ({id:uid(),type:'player',text:t});
+  const ev  = (et,ti,bo) => ({id:uid(),type:'event',evType:et,title:ti,body:bo});
+  const sms = (time,msgs) => ({id:uid(),type:'sms',time,msgs});
+  const ph  = (status,log) => ({id:uid(),type:'phone',status,log});
+  const grp = (title,msgs) => ({id:uid(),type:'group',title,msgs});
+  const int = (label,text) => ({id:uid(),type:'intimate',label,text});
+  const ch  = (text,hint,fx,next) => ({text,hint,fx,next});
+  const cg  = (num,title,sub,next) => ({id:uid(),type:'chapter_gate',num,title,sub,next});
+
+  const BG_INTRO = {
+    chaebol: '首尔某顶层餐厅，你的家族包下了整个楼层。今晚是一场普通的行业聚会，你以为。',
+    mixed:   '你刚从巴黎飞回来，时差还没倒过来，手边是第三杯咖啡，窗外是首尔的灯。',
+    founder: '你的B轮刚刚关账，今晚本来是你自己的庆祝，结果助理临时安排了一个"重要会面"。',
+  };
+  const P_TONE = {
+    queen: '你的语气带着天然的掌控感，慢条斯理，但每个字都落地有声。',
+    cold:  '你保持着礼貌的距离，表情干净，让人猜不透你在想什么。',
+    bold:  '你直接开口，不绕弯子，偶尔让对方措手不及。',
+    soft:  '你的语气温柔，但眼睛很认真，记住所有值得记住的细节。',
+  };
+
+  const nodes = {};
+  const add = (...ns) => ns.forEach(n=>{nodes[n.id]=n;});
+
+  // ── 序章：三人登场 ──
+  const s0 = {id:'s0',type:'chapter_gate',num:'序章',title:'第一夜',sub:'首尔·夜·三个陌生人',next:'s0a'};
+  const s0a = {id:'s0a',type:'seq',items:[
+    sc(BG_INTRO[bgId]),
+    sc(P_TONE[pId]),
+    sc('那个地方你不该出现，但你出现了。他们三个，不是一起来的，却在同一个夜晚，先后走进了你的视野。'),
+    sc('第一个靠近你的是金泳勋。他站在角落，手里一杯没喝的威士忌，眼神落在你身上，停了三秒才移开。'),
+    npc('YH','……你和这里格格不入。（直接）',5,0,0),
+    you('（抬头看他）我可以说同样的话。'),
+    npc('YH','（嘴角轻动）……有意思。',7,0,0),
+  ],choices:[
+    ch('打量他一眼，慢慢开口','YH',{yh:8,hj:0,jy:0},'s0b'),
+    ch('转开视线，假装对他没兴趣','N',{yh:5,hj:0,jy:0},'s0b'),
+  ]};
+
+  const s0b = {id:'s0b',type:'seq',items:[
+    sc('第二个出现的是李贤在。他走过来的方式很随意，像是在散步，但你注意到他已经观察你一段时间了。'),
+    npc('HJ','（凑过来）……泳勋哥在跟你说话？（看向你）你好啊，我是贤在。',0,6,0),
+    npc('YH','……你插什么话。（平静但有点不对）',5,0,0),
+    npc('HJ','（对你）他这样子，说明你让他在意了。（对泳勋）对吧。',0,7,0),
+  ],choices:[
+    ch('（对贤在笑）他刚夸我格格不入。','HJ',{yh:3,hj:8,jy:0},'s0c'),
+    ch('（对泳勋）你朋友很活泼。','YH',{yh:7,hj:4,jy:0},'s0c'),
+  ]};
+
+  const s0c = {id:'s0c',type:'seq',items:[
+    sc('第三个，是你没有预料到的。'),
+    sc('李柱延没有走过来，是你们的视线在人群里对上的。他靠着墙，手机放在口袋里，只是看着你，什么都没说。'),
+    sc('过了一会儿，他走过来，站在你面前，开口只说了一句：'),
+    npc('JY','……你叫什么名字。',0,0,8),
+    sc('三个男人，现在都在你的视野里。'),
+  ],choices:[
+    ch('（告诉他名字，看着他的眼睛）','JY',{yh:0,hj:0,jy:9},'s0d'),
+    ch('（笑了一下）你们三个认识？','N',{yh:3,hj:3,jy:3},'s0d'),
+  ]};
+
+  const s0d = {id:'s0d',type:'seq',items:[
+    sc('今晚就这样开始了。你没想到，这三个人会在接下来的时间里一直出现在你的世界里。'),
+    sc('不是偶然，是因为你们其实住在同一栋楼。同一栋服务式公寓，不同楼层。'),
+    ev('🏢 设定','得慕大公寓','首尔某高端服务式公寓。金泳勋在12楼，李贤在在14楼，李柱延在16楼。你在15楼。没有人预谋这件事，但现在谁都没办法假装对方不存在了。'),
+  ],choices:[
+    ch('（回到自己房间，想了很久今晚的事）','N',{yh:0,hj:0,jy:0},'ch1'),
+  ]};
+
+  // ── 第一章：电梯 ──
+  const ch1 = {id:'ch1',type:'chapter_gate',num:'第一章',title:'电梯里的三分钟',sub:'距离这件事，有时候是一个按钮的问题',next:'ch1a'};
+  const ch1a = {id:'ch1a',type:'seq',items:[
+    sc('第二天早上，你在等电梯。门开了，里面站着李贤在，AirPods挂着，睡前脸，手里是一瓶梨汁。'),
+    npc('HJ','……哦，你啊。（往旁边挪了挪）进来。',0,5,0),
+    sc('电梯在12楼停了。金泳勋进来，看到你们两个，停顿了一秒。'),
+    npc('YH','……（没说话，站到另一边）',4,0,0),
+    sc('14楼，贤在出去了，回头对你挤了个眉毛。'),
+    sc('剩下你和泳勋，从14楼到15楼，大概二十秒。'),
+    npc('YH','……昨晚，你没回答我一个问题。（低声）',6,0,0),
+    you('你问我什么了？'),
+    npc('YH','……（门开了）算了，下次。',8,0,0),
+  ],choices:[
+    ch('等一下——你问什么？','YH',{yh:10,hj:0,jy:0},'ch1b_YH'),
+    ch('（就让他走了，去找贤在）','HJ',{yh:3,hj:8,jy:0},'ch1b_HJ'),
+    ch('（关上门，往上走找柱延）','JY',{yh:0,hj:0,jy:10},'ch1b_JY'),
+  ]};
+
+  const ch1b_YH = {id:'ch1b_YH',type:'seq',items:[
+    sc('你在走廊里叫住了他，他转过来，表情有点意外。'),
+    npc('YH','……（停）昨晚，你说"可以说同样的话"。（停）我想知道，你是真的这么想，还是只是回话。',7,0,0),
+    you('（想了一下）我从来不只是回话。'),
+    npc('YH','……（沉默三秒，然后点头）好。（走了）',9,0,0),
+    sc('他走进电梯，门关上之前，你看到他脸上有什么东西松开了一点。'),
+  ],next:'ch1c'};
+
+  const ch1b_HJ = {id:'ch1b_HJ',type:'seq',items:[
+    sc('贤在在走廊等你，像是预料到你会出来。'),
+    npc('HJ','（笑）泳勋哥说什么了，说完才走？',0,7,0),
+    you('说了个算了。'),
+    npc('HJ','……哈，他就这样。（转正脸）喂，你早上吃了吗。',0,8,0),
+    you('没有。'),
+    npc('HJ','走，我带你去一个地方。',0,9,0),
+    sc('他带你去了楼下一家只有五张桌子的小店，说是他发现的秘密基地。你们坐了两个小时，说了很多，笑了很多。'),
+  ],next:'ch1c'};
+
+  const ch1b_JY = {id:'ch1b_JY',type:'seq',items:[
+    sc('你按了16楼。'),
+    sc('门开了，柱延正要出门，两个人差点撞上。他及时撑在门框上，你们面对面，距离不到半臂。'),
+    npc('JY','……（低头看你）你来干嘛。',0,0,7),
+    you('路过。'),
+    npc('JY','……十六楼没有路可以路过。（直接）',0,0,7),
+    you('（没反驳）'),
+    npc('JY','……（后退一步，侧身让路）进来坐一会儿。',0,0,10),
+    sc('他的房间比你想象的整洁，窗帘没拉，首尔铺在玻璃外面，你们坐了很久，几乎没有说话，但不觉得尴尬。'),
+  ],next:'ch1c'};
+
+  const ch1c = {id:'ch1c',type:'seq',items:[
+    sc('第一章还没结束，你已经让三个人各自以为，你在意的是他。'),
+    sms('当晚群消息',[ // 暗线
+      {r:false,t:'（李贤在）喂，你今天认识那个住15楼的没有'},
+      {r:false,t:'（李柱延）认识了'},
+      {r:false,t:'（金泳勋）……嗯'},
+      {r:false,t:'（李贤在）她/他怎么样'},
+      {r:false,t:'（金泳勋）没什么'},
+      {r:false,t:'（李柱延）（已读不回）'},
+      {r:false,t:'（李贤在）你们两个有问题'},
+    ]),
+    sc('你当然不知道这条对话的存在。但你知道，接下来不会简单。'),
+  ],choices:[
+    ch('（翻出三人的联系方式，一一存好）','N',{yh:2,hj:2,jy:2},'ch2'),
+  ]};
+
+  // ── 第二章：各自接近 ──
+  const ch2 = {id:'ch2',type:'chapter_gate',num:'第二章',title:'靠近的方式',sub:'三个人，三种温度，你开始分不清自己的心跳',next:'ch2a'};
+  const ch2a = {id:'ch2a',type:'seq',items:[
+    sc('那之后的两周，三个人用各自的方式出现在你的生活里。'),
+    sc('泳勋是最安静的那个。他不主动，但他总是在。你出门，他在等电梯；你回来，走廊里有他的背影。'),
+    sc('某天下午，他敲了你的门，手里拿着一个纸袋。'),
+    npc('YH','……楼下新开了一家，不知道你吃不吃这个。（放下就要走）',8,0,0),
+    you('（叫住他）泳勋。'),
+    npc('YH','（转身，等）',6,0,0),
+  ],choices:[
+    ch('进来喝杯茶吧。','YH',{yh:12,hj:0,jy:0},'ch2b_YH'),
+    ch('谢谢，你要进来吗。（平静问）','N',{yh:9,hj:0,jy:0},'ch2b_YH'),
+  ]};
+
+  const ch2b_YH = {id:'ch2b_YH',type:'seq',items:[
+    sc('他坐在你的沙发上，背很直，手放在膝盖上，像是不太习惯放松。'),
+    npc('YH','……你做这行多久了。（平静地问）',5,0,0),
+    you('三年，你呢？'),
+    npc('YH','七年。（停）你比我想的更……沉得住。',7,0,0),
+    you('你以为我会是什么样的？'),
+    npc('YH','……没有预期。（低头）这是第一次，我对一个人没有预期。',10,0,0),
+    sc('他走的时候，在门口停了一下，回头，表情是你没见过的认真。'),
+    npc('YH','……可不可以，有时候，我来找你说话。',11,0,0),
+  ],choices:[
+    ch('可以。随时。','YH',{yh:13,hj:0,jy:0},'ch2c'),
+    ch('看情况。（慢慢说）','N',{yh:9,hj:0,jy:0},'ch2c'),
+  ]};
+
+  const ch2c = {id:'ch2c',type:'seq',items:[
+    sc('同一周，贤在用的方式完全不同。'),
+    sc('他发消息，发语音，发各种没有逻辑的梗图，然后在深夜突然认真：'),
+    sms('周三 01:40',[
+      {r:false,t:'你睡了吗'},
+      {r:true, t:'还没'},
+      {r:false,t:'我能问你一个问题吗'},
+      {r:true, t:'问'},
+      {r:false,t:'你对泳勋哥，是什么感觉'},
+      {r:true, t:'……你为什么问这个'},
+      {r:false,t:'就是想知道'},
+      {r:true, t:'为什么你想知道'},
+      {r:false,t:'（发了个表情包逃掉了）'},
+      {r:false,t:'……因为我也想知道，你对我，是什么感觉'},
+    ]),
+  ],choices:[
+    ch('……你先说你对我什么感觉。','HJ',{yh:0,hj:13,jy:0},'ch2d'),
+    ch('（已读不回，留着他猜）','N',{yh:0,hj:10,jy:3},'ch2d'),
+  ]};
+
+  const ch2d = {id:'ch2d',type:'seq',items:[
+    sc('柱延的方式是最直接的，也是最让你难处理的。'),
+    sc('那天你们在健身房碰到，他在结束训练，汗还没干，站在镜子前拉伸。看到你，他直接走过来。'),
+    npc('JY','……你会拳击吗。（直接问）',0,0,7),
+    you('不会。'),
+    npc('JY','我教你。（不是问句）',0,0,8),
+    sc('他站在你背后，调整你握拳的姿势，他的手很大，箍住你的时候，你的呼吸停了一下。'),
+    npc('JY','……放松。（声音在你耳边，很近）',0,0,10),
+    int('张力','他的体温透过薄薄的衣料传过来，你能感觉到他的呼吸节奏，规律而沉稳。你不知道他有没有注意到你的心跳乱了。他只是继续，非常平静地，说："再来一次。"'),
+  ],choices:[
+    ch('（专注练，不让他看出异常）','JY',{yh:0,hj:0,jy:12},'ch3'),
+    ch('（停下来，转身面对他）','JY',{yh:0,hj:0,jy:14},'ch3'),
+  ]};
+
+  // ── 第三章：吃醋 ──
+  const ch3 = {id:'ch3',type:'chapter_gate',num:'第三章',title:'醋意这件事',sub:'他们开始注意到，你在另外两个人那里花了多少时间',next:'ch3a'};
+  const ch3a = {id:'ch3a',type:'seq',items:[
+    sc('三周后，你发现了一件事——他们三个对彼此的动态，都比表面上显示的更敏感。'),
+    sc('那天你和贤在在楼下咖啡馆说话，笑得比较大声，泳勋经过，透过玻璃看了一眼，没进来。'),
+    sc('贤在注意到了，眯了一下眼睛。'),
+    npc('HJ','……泳勋哥，进来啊！（冲着窗外喊）',0,6,0),
+    sc('泳勋进来了，在你旁边坐下，点了一杯什么，没有说话。'),
+    npc('YH','（对你）……你们聊什么。',6,0,0),
+    npc('HJ','（接话）聊她/他的公司啊，很厉害的，你不知道吗。',0,7,0),
+    npc('YH','……（对你）你没告诉我。',7,0,0),
+  ],choices:[
+    ch('没想到你想知道。','YH',{yh:10,hj:3,jy:0},'ch3b_YH_jeal'),
+    ch('（对贤在）你帮我说了。','HJ',{yh:4,hj:10,jy:0},'ch3b_HJ_win'),
+  ]};
+
+  const ch3b_YH_jeal = {id:'ch3b_YH_jeal',type:'seq',items:[
+    sc('泳勋沉默了一下，端起杯子，语气比平时平了一个度。'),
+    npc('YH','……我想知道的，多着。（停）只是你从没给我机会问。',8,0,0),
+    sc('贤在在旁边，眼睛转来转去，笑得很有意思。'),
+    npc('HJ','……好，那我先走了，你们聊。（起身）',0,5,0),
+    sc('然后你和泳勋就这样，在那家咖啡馆，说了两个小时。他问了你很多，你发现他是那种真的在听的人。'),
+  ],next:'ch3c'};
+
+  const ch3b_HJ_win = {id:'ch3b_HJ_win',type:'seq',items:[
+    sc('贤在得意地笑了一下，对你说：'),
+    npc('HJ','（压低声音）你看他那个表情，他在吃醋。',0,8,0),
+    npc('YH','（隔着桌子）我听到了。',5,0,0),
+    npc('HJ','……哦哦哦，那更好。',0,7,0),
+    sc('你在中间，左边是在假装没事实则已经有点黑脸的泳勋，右边是笑得很欠揍的贤在，觉得这个世界很荒诞。'),
+  ],next:'ch3c'};
+
+  const ch3c = {id:'ch3c',type:'seq',items:[
+    sc('同一周，柱延知道了你在和另外两个人走近。他的反应是最特别的。'),
+    sc('他在走廊拦住你，语气一如既往没有起伏。'),
+    npc('JY','……你这几天，跟贤在和泳勋，来往很多。',0,0,6),
+    you('我们住在同一栋楼，很正常。'),
+    npc('JY','……（停顿）正常。（重复这两个字，像在确认什么）',0,0,7),
+    you('你不高兴？'),
+    npc('JY','……（直视你）我从来不做自己不高兴的事。（停）但，（更低）……我也从来没想过要分享。',0,0,12),
+    int('暧昧','走廊里没有别人。他就站在那里，表情很平静，但眼睛里有一种让你无法假装看不见的东西——克制的，专注的，像是在做一个决定。'),
+  ],choices:[
+    ch('……那你想怎么办。','JY',{yh:0,hj:0,jy:14},'ch4'),
+    ch('（没回答，绕开他走了）','N',{yh:0,hj:0,jy:10},'ch4'),
+  ]};
+
+  // ── 第四章：深夜 ──
+  const ch4 = {id:'ch4',type:'chapter_gate',num:'第四章',title:'深夜的事',sub:'有些话，只有在夜里才能开口',next:'ch4a'};
+  const ch4a = {id:'ch4a',type:'seq',items:[
+    sc('那个周五，公寓里的三个人分别在深夜敲了你的门或发来了消息。'),
+    sc('第一个是贤在，十点，手里拿着两瓶啤酒。'),
+    npc('HJ','……我睡不着，你开着灯，我就猜你也没睡。（直接）',0,9,0),
+    you('进来吧。'),
+    sc('他坐在你床边的地板上，背靠着床，说了很多话——关于他的工作，关于压力，关于他不想让人看见的那些。'),
+    npc('HJ','……你知道吗，我在你面前说话，不用想太多。（停）这很少见。',0,11,0),
+    int('亲密时刻','他把头往后靠在你的床上，距离你很近。你们都没有动，听着窗外的城市声音。他说："如果可以的话，我想就这样待很久。"你没有说不可以。'),
+  ],choices:[
+    ch('（就这样陪着他，什么都没说）','HJ',{yh:0,hj:14,jy:0},'ch4b'),
+    ch('（问他）你喜欢我吗。（直接）','HJ',{yh:0,hj:12,jy:0},'ch4b'),
+  ]};
+
+  const ch4b = {id:'ch4b',type:'seq',items:[
+    sc('凌晨十二点，贤在走了。十二点半，你收到了泳勋的消息。'),
+    sms('凌晨 00:31',[
+      {r:false,t:'还没睡？'},
+      {r:true, t:'刚刚才一个人'},
+      {r:false,t:'……贤在在你那里了多久'},
+      {r:true, t:'你怎么知道'},
+      {r:false,t:'他经过我门口的时候，我开着门'},
+      {r:true, t:'……'},
+      {r:false,t:'没事，我只是想问你，睡得着吗'},
+      {r:true, t:'现在还好，你呢'},
+      {r:false,t:'……睡不着。你有时间的话，能下来一趟吗。12楼。'},
+    ]),
+  ],choices:[
+    ch('（去了）','YH',{yh:14,hj:0,jy:0},'ch4c_go'),
+    ch('（说）你来15楼。','YH',{yh:12,hj:0,jy:0},'ch4c_stay'),
+  ]};
+
+  const ch4c_go = {id:'ch4c_go',type:'seq',items:[
+    sc('泳勋开了门，看到你，表情有一瞬间的松动。'),
+    sc('他的房间音乐还开着，很小声，你不认识的歌。他倒了两杯热茶，你们坐着，话不多，但不沉默。'),
+    npc('YH','……有时候，我不知道怎么跟人相处。（低）',8,0,0),
+    you('但你今天让我来了。'),
+    npc('YH','……（停）是。（看你）因为你不一样。',11,0,0),
+    int('深夜','他们低着头，把杯子放下，又拿起来。你坐得离他不远，能感觉到他的呼吸。他最后说："你留一会儿可以吗。"就这么一句，但你知道他把所有的话都放进这一句里了。'),
+  ],next:'ch4d'};
+
+  const ch4c_stay = {id:'ch4c_stay',type:'seq',items:[
+    sc('泳勋停顿了一下，然后来了。'),
+    sc('他站在你门口，看起来比平时小一号。你侧身让他进来，他在沙发上坐下，看着自己的手，说：'),
+    npc('YH','……我不擅长这个。（停）求人。',7,0,0),
+    you('但你来了。'),
+    npc('YH','……是。（抬头看你）你，让我觉得，来了值得。',12,0,0),
+    int('深夜','两个人在你的灯光下说了很久的话。快走的时候，他在门口站了一下，转身说："谢谢你今天。"听起来很简单，但说这句话的时候，他的声音低了半个调。'),
+  ],next:'ch4d'};
+
+  const ch4d = {id:'ch4d',type:'seq',items:[
+    sc('凌晨两点，你以为今晚结束了。'),
+    sc('走廊里有动静，你开门，柱延站在那里，不知道站了多久。'),
+    npc('JY','……（看到你开门，没动）你还没睡。',0,0,7),
+    you('你在外面站多久了？'),
+    npc('JY','……不久。（停）我想说一件事。',0,0,8),
+    you('说。'),
+    npc('JY','……（直视你）我不想和他们竞争这件事。（停）所以我想让你知道，我是认真的。',0,0,13),
+    int('深夜走廊','他没有进来，只是站在走廊里，门口的灯把他的侧脸照得很清楚。他的表情是认真的，眼神是沉的。他说完那句话，转身就走了。留下你站在原地，很久没有动。'),
+  ],choices:[
+    ch('（叫住他）……柱延。','JY',{yh:0,hj:0,jy:14},'ch5'),
+    ch('（就看着他走了，关上门）','N',{yh:0,hj:0,jy:11},'ch5'),
+  ]};
+
+  // ── 第五章：公开的裂缝 ──
+  const ch5 = {id:'ch5',type:'chapter_gate',num:'第五章',title:'裂缝',sub:'三个人都知道发生了什么，但谁都没有先说破',next:'ch5a'};
+  const ch5a = {id:'ch5a',type:'seq',items:[
+    sc('事情在第五周开始往外溢。'),
+    sc('先是公司那边——有人拍到你进出得慕大公寓，和三个成员都有画面，开始在网上讨论。'),
+    ev('📱 舆论事件','「得慕大那栋楼里……」','有人在网上发布了连续三张图，分别是你和泳勋在电梯前、和贤在在咖啡馆、和柱延在健身房。没有一张照片有问题，但放在一起，够人想象很多。'),
+    sc('三个人分别给你发了消息。'),
+    sms('当天三条消息',[
+      {r:false,t:'（泳勋）你看到了吗。没事，我处理。'},
+      {r:false,t:'（贤在）哈哈哈哈不是我发的！但说真的，你还好吗。'},
+      {r:false,t:'（柱延）不用理会，我来解决。'},
+    ]),
+  ],choices:[
+    ch('先回泳勋','YH',{yh:10,hj:2,jy:2},'ch5b_YH'),
+    ch('先回贤在','HJ',{yh:2,hj:10,jy:2},'ch5b_HJ'),
+    ch('先回柱延','JY',{yh:2,hj:2,jy:10},'ch5b_JY'),
+  ]};
+
+  const ch5b_YH = {id:'ch5b_YH',type:'seq',items:[
+    sms('回泳勋',[
+      {r:true, t:'不用你处理，是我自己的事'},
+      {r:false,t:'……（停很久）你不需要帮忙？'},
+      {r:true, t:'需要我自己能搞定，谢谢你想到'},
+      {r:false,t:'（更长的停）……好。但如果需要，告诉我。'},
+      {r:true, t:'嗯'},
+      {r:false,t:'……（很久之后）你今晚吃了吗。'},
+      {r:true, t:'你在问正事吗'},
+      {r:false,t:'算正事。我订了东西，够两个人吃。'},
+    ]),
+  ],next:'ch5c'};
+
+  const ch5b_HJ = {id:'ch5b_HJ',type:'seq',items:[
+    sms('回贤在',[
+      {r:true, t:'还好，你怎么一副没事人的样子'},
+      {r:false,t:'因为你没问题嘛，有我们呢'},
+      {r:true, t:'"我们"？'},
+      {r:false,t:'（停）……就是，你不是一个人。（停）我的意思是'},
+      {r:true, t:'你的意思是什么'},
+      {r:false,t:'……我的意思是，我在。（停）不只是朋友那种在。'},
+      {r:true, t:'（停了很久）'},
+      {r:false,t:'……你还在吗'},
+      {r:true, t:'在，在想你说的话'},
+    ]),
+  ],next:'ch5c'};
+
+  const ch5b_JY = {id:'ch5b_JY',type:'seq',items:[
+    sms('回柱延',[
+      {r:true, t:'你怎么解决'},
+      {r:false,t:'找人处理，别担心'},
+      {r:true, t:'不用你解决我自己的事'},
+      {r:false,t:'（停）……我知道你能。但我想。'},
+      {r:true, t:'为什么'},
+      {r:false,t:'……因为这件事，有一半是因为我。'},
+      {r:true, t:'只有一半？'},
+      {r:false,t:'……（停）另一半，是因为我希望你和我有关系。'},
+    ]),
+  ],next:'ch5c'};
+
+  const ch5c = {id:'ch5c',type:'seq',items:[
+    sc('那晚，三个人难得聚在了一起，在你的客厅。没有人预谋，是贤在拉来了泳勋，泳勋遇到了正好上来的柱延。'),
+    sc('气氛不算轻松，但没有人挑破什么。'),
+    grp('客厅 · 三个人',[
+      {who:'HJ',cls:'hj',t:'今天这事，大家都处理好了吧。（眼睛看向你）'},
+      {who:'YH',cls:'yh',t:'嗯。（没多说）'},
+      {who:'JY',cls:'jy',t:'处理了。（看着泳勋）'},
+      {who:'HJ',cls:'hj',t:'那就好。（对你）你吓到没有。'},
+      {who:'YH',cls:'yh',t:'……（先于你说）她/他没那么容易被吓到。'},
+      {who:'JY',cls:'jy',t:'（看向泳勋，没说话，但眼神有什么东西）'},
+      {who:'HJ',cls:'hj',t:'……（看看这个看看那个）好，你们三个，在打什么哑谜。'},
+    ]),
+  ],choices:[
+    ch('（打圆场）今天辛苦大家了，吃东西吗。','N',{yh:4,hj:4,jy:4},'ch6'),
+    ch('（直接）你们三个，对我都有意思吧。','N',{yh:8,hj:8,jy:8},'ch6'),
+  ]};
+
+  // ── 第六章：选择前夕 ──
+  const ch6 = {id:'ch6',type:'chapter_gate',num:'第六章',title:'选择之前',sub:'你知道不能再拖了',next:'ch6a'};
+  const ch6a = {id:'ch6a',type:'seq',items:[
+    sc('第七周，你开始意识到，你需要给一个答案了。'),
+    sc('不是因为外部压力，是因为三个人都在用各自的方式，等着你。'),
+    sc('泳勋的等待是安静的——他不催，不问，但每次见到你，他看你的时间比以前长了一点。'),
+    sc('贤在的等待是有点焦的——他试图用说笑消解，但偶尔会突然认真，突然安静。'),
+    sc('柱延的等待是最重的——他不多说，但他的存在方式本身，就像一个问号压在那里。'),
+    sc('你需要和他们三个，分别谈一次真正的话。'),
+  ],choices:[
+    ch('先去找泳勋','YH',{yh:5,hj:0,jy:0},'ch6b_YH'),
+    ch('先去找贤在','HJ',{yh:0,hj:5,jy:0},'ch6b_HJ'),
+    ch('先去找柱延','JY',{yh:0,hj:0,jy:5},'ch6b_JY'),
+  ]};
+
+  const ch6b_YH = {id:'ch6b_YH',type:'seq',items:[
+    sc('你敲了12楼的门，泳勋开门，看到是你，往旁边退了一步让你进来，没有说"你怎么来了"。'),
+    sc('他沏了茶，两个人坐着，沉默比以前更不一样——不是尴尬，是都在等对方先说。'),
+    you('……泳勋，你喜欢我吗。'),
+    npc('YH','（停顿，很长，抬头看你）……你想听实话。',9,0,0),
+    you('废话。'),
+    npc('YH','……（轻）是。比我以为的更。（停）但我不知道这对你公平不公平。',12,0,0),
+    you('为什么不公平。'),
+    npc('YH','……因为我，不是很会（停）……我不太擅长。表达。给承诺。这些。（努力）但我，是认真的。',13,0,0),
+    int('深夜坦白','他说完，低下头，手指交叠在桌上。那是你第一次看到他有点慌。你伸手，放在他的手背上，他没有动，但你感觉到他的呼吸顿了一下。'),
+  ],next:'ch6_decide'};
+
+  const ch6b_HJ = {id:'ch6b_HJ',type:'seq',items:[
+    sc('贤在开门的时候正在吃东西，看到你，把嘴里的东西咽下去，努力整理了一下表情。'),
+    npc('HJ','（故意轻松）哟，稀客，进来坐。',0,8,0),
+    sc('你坐下，他在你对面，等你开口。'),
+    you('贤在，你对我，到底是什么意思。'),
+    npc('HJ','……（不再装轻松）你想让我说清楚？',0,9,0),
+    you('嗯。'),
+    npc('HJ','……（停）喜欢你。不是一般那种喜欢。（抬头，直接对上你的眼睛）我想和你在一起，但我不知道你那边是什么情况，所以我一直，没说。',0,13,0),
+    int('坦白','他把手边的水瓶推来推去，很少见的，他有点不知道手放哪里。平时总是很自然的他，现在像一个认真准备了很久答案的人。'),
+  ],next:'ch6_decide'};
+
+  const ch6b_JY = {id:'ch6b_JY',type:'seq',items:[
+    sc('柱延开门，没有任何多余的表情，侧身让你进来。'),
+    sc('他的房间窗帘开着，首尔的夜在外面，他在窗边站着，背对着你。'),
+    you('……柱延。'),
+    npc('JY','（没转身）我知道你来干嘛。',0,0,8),
+    you('那你先说。'),
+    npc('JY','（转身，看你）……我说过，我是认真的。（停）但我不会让你选我，是因为你觉得我等了你很久，或者因为我比另外两个人更强硬。（停）我要你选我，是因为你真的想。',0,0,13),
+    you('……你不怕我不选你？'),
+    npc('JY','……（停，很久）怕。（第一次，他的语气有了一丝裂缝）但比怕，我更不想用错误的方式，留住你。',0,0,14),
+    int('窗边','他站在那里，首尔的灯光打在他背上。你们之间有三步的距离，但你感觉得到那个距离正在变成别的东西。'),
+  ],next:'ch6_decide'};
+
+  // ── 最终选择 ──
+  const ch6_decide = {id:'ch6_decide',type:'seq',items:[
+    sc('你在自己的房间，15楼，窗外是你们共同居住的城市。'),
+    sc('你想了很久。'),
+    sc('三个人，三种方式，三种温度。'),
+    sc('但你只能做一个选择。'),
+  ],choices:[
+    ch('选择金泳勋 영훈','YH',{yh:20,hj:-5,jy:-5},'end_YH'),
+    ch('选择李贤在 현재','HJ',{yh:-5,hj:20,jy:-5},'end_HJ'),
+    ch('选择李柱延 주연','JY',{yh:-5,hj:-5,jy:20},'end_JY'),
+    ch('……我还没想好。（逃避）','N',{yh:0,hj:0,jy:0},'end_alone'),
+  ]};
+
+  // ── ENDINGS ──
+  const end_YH = {id:'end_YH',type:'ending',badge:'🥃',title:'泳勋的选择',whoClass:'yh',whoText:'金泳勋 · 영훈',
+    desc:`你在12楼，敲了他的门。\n他开门，看到你，什么都没问。\n\n你说：我选了你。\n他沉默了三秒，然后说：\n"我等这句话等了很久。"\n\n他不是很会说甜话，\n但他把你让进去，\n沏了两杯茶，\n就这样，从那个夜晚开始。\n\n贤在后来发消息说"恭喜"，\n贤在是这样的人。\n柱延没有说什么，\n但他之后见到你，\n眼神还是那双眼神。\n\n泳勋把你的手握着，说：\n"我会慢慢学的。"\n你说：我也是。`};
+
+  const end_HJ = {id:'end_HJ',type:'ending',badge:'🌙',title:'贤在的选择',whoClass:'hj',whoText:'李贤在 · 현재',
+    desc:`你在14楼，没有敲门，\n直接发消息：出来一下。\n\n他几乎是秒出来的，\n站在走廊，睡衣，头发没打理，\n眼睛里有一点点惊喜在藏着。\n\n你说：我想好了，是你。\n他沉默了大概四秒，\n然后笑了，真的笑，\n说："我本来以为要等更久的。"\n\n泳勋知道之后没有说什么，\n只是点了点头。\n柱延说了一句"好"，就没了。\n\n贤在把你的手指扣住，\n说："以后不准再让我猜了。"\n你说：你也是。`};
+
+  const end_JY = {id:'end_JY',type:'ending',badge:'🌃',title:'柱延的选择',whoClass:'jy',whoText:'李柱延 · 주연',
+    desc:`你在16楼，敲了门。\n他开门，比你想象的快，\n像是他一直在门这边。\n\n你还没开口，他说：\n"你想好了。"\n不是问句。\n\n你说：是你。\n他没有说话，\n往旁边站了一下，\n让你进来。\n\n就这样，没有太多话，\n但他关上门，\n把你挡在里面，\n说了一句：\n"以后，你不需要再想了。"\n\n贤在后来问你，你说了。\n他说："哦，意料之中。"\n然后假装很洒脱地换了话题。\n泳勋什么都没说，\n但你知道他明白了。\n\n这件事就这样结束，又开始。`};
+
+  const end_alone = {id:'end_alone',type:'ending',badge:'✦',title:'还没想好',whoClass:'alone',whoText:'——',
+    desc:`你站在15楼，\n没有敲任何人的门。\n\n你知道这个答案不够，\n但你也知道，\n仓促给出的答案，\n比"还没想好"更伤人。\n\n三个人都还在。\n城市还在。\n你还在。\n\n……也许，明天再想。`};
+
+  // collect
+  const allNodes=[s0,s0a,s0b,s0c,s0d,
+    ch1,ch1a,ch1b_YH,ch1b_HJ,ch1b_JY,ch1c,
+    ch2,ch2a,ch2b_YH,ch2c,ch2d,
+    ch3,ch3a,ch3b_YH_jeal,ch3b_HJ_win,ch3c,
+    ch4,ch4a,ch4b,ch4c_go,ch4c_stay,ch4d,
+    ch5,ch5a,ch5b_YH,ch5b_HJ,ch5b_JY,ch5c,
+    ch6,ch6a,ch6b_YH,ch6b_HJ,ch6b_JY,ch6_decide,
+    end_YH,end_HJ,end_JY,end_alone
+  ];
+  allNodes.forEach(n=>{nodes[n.id]=n;});
+  return {nodes,start:'s0'};
+}
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let G={bgId:null,pId:null,story:null,curId:null,seqIdx:0,
+  yh:10,hj:10,jy:10,chapter:0};
+
+function applyFx(fx){
+  if(!fx)return;
+  G.yh=Math.max(0,Math.min(100,G.yh+(fx.yh||0)));
+  G.hj=Math.max(0,Math.min(100,G.hj+(fx.hj||0)));
+  G.jy=Math.max(0,Math.min(100,G.jy+(fx.jy||0)));
+  updateBars();
+}
+function updateBars(){
+  document.getElementById('fYH').style.width=G.yh+'%';
+  document.getElementById('fHJ').style.width=G.hj+'%';
+  document.getElementById('fJY').style.width=G.jy+'%';
+  document.getElementById('nYH').textContent=G.yh;
+  document.getElementById('nHJ').textContent=G.hj;
+  document.getElementById('nJY').textContent=G.jy;
+}
+
+// ══════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════
+const chat=()=>document.getElementById('gChat');
+const scrollDown=()=>{const c=chat();setTimeout(()=>c.scrollTo({top:c.scrollHeight,behavior:'smooth'}),60);};
+
+const WHO_NAME={YH:'金泳勋 영훈',HJ:'李贤在 현재',JY:'李柱延 주연'};
+const WHO_CLS={YH:'avi-YH npc-YH',HJ:'avi-HJ npc-HJ',JY:'avi-JY npc-JY'};
+const WHO_INIT={YH:'영',HJ:'현',JY:'주'};
+
+function addScene(text){
+  const d=document.createElement('div');d.className='scene-blk';d.textContent=text;
+  chat().appendChild(d);scrollDown();
+}
+function addNpc(who,text,yh,hj,jy){
+  const row=document.createElement('div');row.className='msg-row npc-'+who;
+  const avi=document.createElement('div');avi.className='msg-avi '+WHO_CLS[who].split(' ')[0];avi.textContent=WHO_INIT[who];
+  const body=document.createElement('div');body.className='msg-body';
+  const wh=document.createElement('div');wh.className='msg-who';wh.textContent=WHO_NAME[who];
+  const bbl=document.createElement('div');bbl.className='msg-bubble';bbl.textContent=text;
+  let tags='';
+  if(yh>0)tags+=`<span class="stag yh-up">▲ 영훈</span>`;
+  if(hj>0)tags+=`<span class="stag hj-up">▲ 현재</span>`;
+  if(jy>0)tags+=`<span class="stag jy-up">▲ 주연</span>`;
+  body.appendChild(wh);body.appendChild(bbl);
+  if(tags){const td=document.createElement('div');td.className='stat-tags';td.innerHTML=tags;body.appendChild(td);}
+  row.appendChild(avi);row.appendChild(body);
+  chat().appendChild(row);scrollDown();
+}
+function addPlayer(text){
+  const row=document.createElement('div');row.className='msg-row player';
+  const avi=document.createElement('div');avi.className='msg-avi avi-P';avi.textContent='나';
+  const body=document.createElement('div');body.className='msg-body';
+  const wh=document.createElement('div');wh.className='msg-who';wh.textContent='나';
+  const bbl=document.createElement('div');bbl.className='msg-bubble';bbl.textContent=text;
+  body.appendChild(wh);body.appendChild(bbl);
+  row.appendChild(body);row.appendChild(avi);
+  chat().appendChild(row);scrollDown();
+}
+function addSystem(text){
+  const row=document.createElement('div');row.className='msg-row system';
+  const body=document.createElement('div');body.className='msg-body';
+  const bbl=document.createElement('div');bbl.className='msg-bubble';bbl.textContent=text;
+  body.appendChild(bbl);row.appendChild(body);
+  chat().appendChild(row);scrollDown();
+}
+function addSms(time,msgs){
+  const w=document.createElement('div');w.className='sms-wrap';
+  let html=`<div class="sms-time">${time}</div>`;
+  msgs.forEach(m=>{html+=`<div class="sms-line${m.r?' r':''}"><div class="sms-bbl">${m.t}</div></div>`;});
+  w.innerHTML=html;chat().appendChild(w);scrollDown();
+}
+function addPhone(status,log){
+  const w=document.createElement('div');w.className='phone-wrap';
+  const logHtml=log.map(l=>`<b style="color:rgba(200,180,240,.6)">${l.n}：</b>${l.t}`).join('<br>');
+  w.innerHTML=`<div class="phone-icon">📞</div><div class="phone-name">통화중</div><div class="phone-status">${status}</div><div class="phone-log">${logHtml}</div>`;
+  chat().appendChild(w);scrollDown();
+}
+function addGroup(title,msgs){
+  const w=document.createElement('div');w.className='group-wrap';
+  const hd=document.createElement('div');hd.className='group-header';hd.innerHTML=`💬 ${title}`;
+  const bd=document.createElement('div');bd.className='group-body';
+  msgs.forEach(m=>{
+    const g=document.createElement('div');g.className='gmsg';
+    const cls={YH:'avi-YH',HJ:'avi-HJ',JY:'avi-JY'}[m.who]||'avi-P';
+    const init={YH:'영',HJ:'현',JY:'주'}[m.who]||'?';
+    const wcls=m.cls||'oth';
+    g.innerHTML=`<div class="gmsg-avi ${cls}">${init}</div><div class="gmsg-body"><div class="gm-who ${wcls}">${m.who}</div><div class="gm-text">${m.t}</div></div>`;
+    bd.appendChild(g);
+  });
+  w.appendChild(hd);w.appendChild(bd);
+  chat().appendChild(w);scrollDown();
+}
+function addEvent(et,ti,bo){
+  const w=document.createElement('div');w.className='ev-card';
+  w.innerHTML=`<div class="ev-type">${et}</div><div class="ev-title">${ti}</div><div class="ev-body">${bo}</div>`;
+  chat().appendChild(w);scrollDown();
+}
+function addIntimate(label,text){
+  const w=document.createElement('div');w.className='intimate-blk';
+  w.innerHTML=`<div class="intimate-label">——— ${label} ———</div><div class="intimate-text">${text}</div>`;
+  chat().appendChild(w);scrollDown();
+}
+
+function setChoices(choices){
+  const wrap=document.getElementById('choicesWrap');
+  const list=document.getElementById('choicesList');
+  list.innerHTML='';
+  choices.forEach((c,i)=>{
+    const btn=document.createElement('button');btn.className='choice-btn';
+    const hc=c.hint==='YH'?'hint-YH':c.hint==='HJ'?'hint-HJ':c.hint==='JY'?'hint-JY':'hint-N';
+    const hl=c.hint==='YH'?'영훈':c.hint==='HJ'?'현재':c.hint==='JY'?'주연':'';
+    btn.innerHTML=`<span class="choice-num">${i+1}</span><span>${c.text}</span>${hl?`<span class="c-hint ${hc}">${hl}</span>`:''}`;
+    btn.onclick=()=>onChoice(c);
+    list.appendChild(btn);
+  });
+  wrap.style.display='block';scrollDown();
+}
+function hideChoices(){document.getElementById('choicesWrap').style.display='none';}
+
+// ══════════════════════════════════════
+// ENGINE
+// ══════════════════════════════════════
+function showChOv(num,title,sub,cb){
+  const o=document.getElementById('chOv');
+  document.getElementById('coNum').textContent=num;
+  document.getElementById('coTitle').textContent=title;
+  document.getElementById('coSub').textContent=sub;
+  o.classList.add('show');
+  setTimeout(()=>{o.classList.remove('show');setTimeout(()=>{if(cb)cb();},400);},2400);
+}
+
+function gotoNode(id){
+  if(!id)return;
+  const node=G.story.nodes[id];
+  if(!node){console.warn('Missing node:',id);return;}
+  G.curId=id;G.seqIdx=0;
+  runNode(node);
+}
+
+function runNode(node){
+  if(node.type==='chapter_gate'){
+    G.chapter++;
+    document.getElementById('gCh').textContent=node.num+' · '+node.title;
+    showChOv(node.num,node.title,node.sub,()=>gotoNode(node.next));
+    return;
+  }
+  if(node.type==='seq'){runSeq(node);return;}
+  if(node.type==='ending'){showEnding(node);return;}
+  if(node.next){gotoNode(node.next);return;}
+}
+
+function runSeq(node){
+  const items=node.items||[];
+  if(G.seqIdx>=items.length){
+    if(node.choices)setChoices(node.choices);
+    else if(node.next)setTimeout(()=>gotoNode(node.next),300);
+    return;
+  }
+  const item=items[G.seqIdx++];
+  if(item.type==='scene')   addScene(item.text);
+  else if(item.type==='npc')    {applyFx({yh:item.yh,hj:item.hj,jy:item.jy});addNpc(item.who,item.text,item.yh,item.hj,item.jy);}
+  else if(item.type==='player') addPlayer(item.text);
+  else if(item.type==='event')  addEvent(item.evType,item.title,item.body);
+  else if(item.type==='sms')    addSms(item.time,item.msgs);
+  else if(item.type==='phone')  addPhone(item.status,item.log);
+  else if(item.type==='group')  addGroup(item.title,item.msgs);
+  else if(item.type==='intimate') addIntimate(item.label,item.text);
+  const delay=(item.type==='sms'||item.type==='phone'||item.type==='group')?750:380;
+  setTimeout(()=>runSeq(node),delay);
+}
+
+function onChoice(c){
+  hideChoices();
+  if(c.hint!=='N')addPlayer(c.text);
+  applyFx(c.fx);
+  setTimeout(()=>gotoNode(c.next),400);
+}
+
+function showEnding(node){
+  hideChoices();
+  document.getElementById('eBadge').textContent=node.badge;
+  document.getElementById('eTitle').textContent=node.title;
+  const ew=document.getElementById('eWho');
+  ew.textContent=node.whoText;ew.className='e-who '+node.whoClass;
+  document.getElementById('eDesc').textContent=node.desc;
+  document.getElementById('ef1').textContent=G.yh;
+  document.getElementById('ef2').textContent=G.hj;
+  document.getElementById('ef3').textContent=G.jy;
+  setTimeout(()=>goTo('s-ending'),800);
+}
+
+// ══════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.style.display='none';s.classList.remove('active');});
+  const s=document.getElementById(id);s.style.display='flex';
+  setTimeout(()=>s.classList.add('active'),10);
+}
+
+function startGame(){
+  if(!G.bgId||!G.pId)return;
+  G.story=buildStory(G.bgId,G.pId);
+  G.yh=10;G.hj=10;G.jy=10;G.chapter=0;
+  chat().innerHTML='';updateBars();
+  goTo('s-game');
+  setTimeout(()=>gotoNode(G.story.start),300);
+}
+
+function hardRestart(){
+  G={bgId:null,pId:null,story:null,curId:null,seqIdx:0,yh:10,hj:10,jy:10,chapter:0};
+  document.querySelectorAll('.bg-card,.pcard-item').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('btnBg').disabled=true;
+  document.getElementById('btnP').disabled=true;
+  goTo('s-title');
+}
+
+function doSave(){
+  if(!G.bgId)return;
+  localStorage.setItem('dmg_save',JSON.stringify({bgId:G.bgId,pId:G.pId,curId:G.curId,yh:G.yh,hj:G.hj,jy:G.jy,chapter:G.chapter,date:new Date().toLocaleDateString('zh-CN')}));
+  alert('已保存');
+}
+function doLoad(){
+  const raw=localStorage.getItem('dmg_save');
+  if(!raw){alert('没有存档');return;}
+  const d=JSON.parse(raw);
+  G.bgId=d.bgId;G.pId=d.pId;G.yh=d.yh;G.hj=d.hj;G.jy=d.jy;G.chapter=d.chapter;
+  G.story=buildStory(G.bgId,G.pId);
+  chat().innerHTML='';updateBars();
+  goTo('s-game');
+  setTimeout(()=>gotoNode(d.curId||G.story.start),300);
+}
+
+// init
+function initBgList(){
+  const list=document.getElementById('bgList');
+  BG_OPTIONS.forEach(b=>{
+    const c=document.createElement('div');c.className=`bg-card ${b.accent}-bg`;
+    c.innerHTML=`<div class="bg-check">✓</div><div class="bg-accent ${b.accent}">${b.tag}</div><div class="bg-name">${b.name}</div><div class="bg-desc">${b.desc}</div><div class="bg-trait">${b.trait}</div>`;
+    c.onclick=()=>{document.querySelectorAll('.bg-card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');G.bgId=b.id;document.getElementById('btnBg').disabled=false;};
+    list.appendChild(c);
+  });
+}
+function initPList(){
+  const list=document.getElementById('pList');
+  PERSONALITIES.forEach(p=>{
+    const c=document.createElement('div');c.className='bg-card pcard-item';
+    c.innerHTML=`<div class="bg-check">✓</div><div style="font-size:20px;margin-bottom:4px">${p.icon}</div><div class="bg-name">${p.name}</div><div class="bg-desc">${p.desc}</div><div class="bg-trait">${p.tone}</div>`;
+    c.onclick=()=>{document.querySelectorAll('.pcard-item').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');G.pId=p.id;document.getElementById('btnP').disabled=false;};
+    list.appendChild(c);
+  });
+}
+initBgList();initPList();
+document.querySelectorAll('.screen').forEach(s=>{if(s.id!=='s-title'){s.style.display='none';s.classList.remove('active');}});
+</script>
+</body>
+</html>
